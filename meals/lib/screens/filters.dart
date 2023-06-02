@@ -1,74 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meals/providers/filters_provider.dart';
 
-enum Filter {
-  glutenFree,
-  lactoseFree,
-  vegetarian,
-  vegan,
-}
-
-class FilterScreen extends StatefulWidget {
-  const FilterScreen(this.currentFilters, {super.key});
-
-  final Map<Filter, bool> currentFilters;
+class FilterScreen extends ConsumerWidget {
+  const FilterScreen({super.key});
 
   @override
-  State<FilterScreen> createState() {
-    return _FilterScreenState();
-  }
-}
-
-class _FilterScreenState extends State<FilterScreen> {
-  var _glutenFreeFilterSet = false;
-  var _lactoseFreeFilterSet = false;
-  var _vegetarianFilterSet = false;
-  var _veganFilterSet = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _glutenFreeFilterSet = widget.currentFilters[Filter.glutenFree]!;
-    _lactoseFreeFilterSet = widget.currentFilters[Filter.lactoseFree]!;
-    _vegetarianFilterSet = widget.currentFilters[Filter.vegetarian]!;
-    _veganFilterSet = widget.currentFilters[Filter.vegan]!;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activeFilters = ref.watch(filterProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Filters'),
       ),
-      body: WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pop({
-            Filter.glutenFree: _glutenFreeFilterSet,
-            Filter.lactoseFree: _lactoseFreeFilterSet,
-            Filter.vegetarian: _vegetarianFilterSet,
-            Filter.vegan: _veganFilterSet,
-          });
-          return false;
-        },
-        child: Column(
-          children: [
-            filterSwitchWidget(context, _vegetarianFilterSet, 'Gluten-free'),
-            filterSwitchWidget(context, _vegetarianFilterSet, 'Lactose-free'),
-            filterSwitchWidget(context, _vegetarianFilterSet, 'Vegetarian'),
-            filterSwitchWidget(context, _veganFilterSet, 'Vegan'),
-          ],
-        ),
+      body: Column(
+        children: [
+          filterSwitchWidget(
+              context, ref, activeFilters, Filter.glutenFree, 'Gluten-free'),
+          filterSwitchWidget(
+              context, ref, activeFilters, Filter.lactoseFree, 'Lactose-free'),
+          filterSwitchWidget(
+              context, ref, activeFilters, Filter.vegetarian, 'Vegetarian'),
+          filterSwitchWidget(
+              context, ref, activeFilters, Filter.vegan, 'Vegan'),
+        ],
       ),
     );
   }
 
-  SwitchListTile filterSwitchWidget(
-      BuildContext context, bool veganFilterSet, final String title) {
+  SwitchListTile filterSwitchWidget(BuildContext context, WidgetRef ref,
+      Map<Filter, bool> activeFilters, Filter filter, final String title) {
     return SwitchListTile(
-      value: veganFilterSet,
+      value: activeFilters[filter]!,
       onChanged: (isChecked) {
-        setState(() {
-          veganFilterSet = isChecked;
-        });
+        ref.read(filterProvider.notifier).setFilter(filter, isChecked);
       },
       title: Text(
         title,

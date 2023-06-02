@@ -7,18 +7,14 @@ import '../data/sample_data.dart';
 import '../models/meal.dart';
 
 class CategoriesScreen extends StatelessWidget {
-  const CategoriesScreen(
-      {super.key, required this.onToggleFav, required this.availableMeals});
+  const CategoriesScreen({super.key, required this.availableMeals});
 
-  final void Function(Meal meal) onToggleFav;
   final List<Meal> availableMeals;
 
   void _selectCategory(BuildContext context, final Category category) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => MealsScreen(
-          meals: _getMeals(category),
-          title: category.title,
-          onToggleFav: onToggleFav),
+      builder: (context) =>
+          MealsScreen(meals: _getMeals(category), title: category.title),
     ));
   }
 
