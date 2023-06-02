@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'package:shoppinglist/models/grocery_item.dart';
 import 'package:shoppinglist/service/base_service.dart';
 
-const String host =
-    'asflutter-prep-5ae6c-default-rtdb.asia-southeast1.firebasedatabase.app';
+const String host = 'xxxxxxxxxxxxxxxxxxxx';
 
 final uri = Uri.https(host, 'shopping-list.json');
 
